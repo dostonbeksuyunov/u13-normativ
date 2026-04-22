@@ -63,9 +63,10 @@ def book_update(request, pk):
 def book_delete(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
-    if request.method == 'POST':
-        book.delete()
+    if request.method == "POST":
+        book.delete()  # 🔥 bu REAL delete emas, soft delete bo‘ladi
         return redirect('book_list')
 
     return render(request, 'books/book_confirm_delete.html', {'book': book})
+
 
