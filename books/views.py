@@ -1,13 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+
 from .models import Book
 from .forms import BookForm
 
 
+# =========================
 # 📚 BOOK LIST + SEARCH
-from django.core.paginator import Paginator
-from django.db.models import Q
-
+# =========================
+@login_required(login_url='login')
 def book_list(request):
     query = request.GET.get('q')
 
@@ -20,8 +23,7 @@ def book_list(request):
     else:
         books = Book.objects.all()
 
-    paginator = Paginator(books, 5)  # har sahifada 5 ta kitob
-
+    paginator = Paginator(books, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -31,7 +33,10 @@ def book_list(request):
     })
 
 
-# ➕ CREATE
+# =========================
+# ➕ CREATE (LOGIN REQUIRED)
+# =========================
+@login_required(login_url='login')
 def book_create(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
@@ -44,7 +49,10 @@ def book_create(request):
     return render(request, 'books/book_form.html', {'form': form})
 
 
-# ✏️ UPDATE
+# =========================
+# ✏️ UPDATE (LOGIN REQUIRED)
+# =========================
+@login_required(login_url='login')
 def book_update(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -59,14 +67,23 @@ def book_update(request, pk):
     return render(request, 'books/book_form.html', {'form': form})
 
 
-# ❌ DELETE
+# =========================
+# ❌ DELETE (LOGIN REQUIRED)
+# =========================
+@login_required(login_url='login')
 def book_delete(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
     if request.method == "POST":
-        book.delete()  # 🔥 bu REAL delete emas, soft delete bo‘ladi
+        book.delete()
         return redirect('book_list')
 
     return render(request, 'books/book_confirm_delete.html', {'book': book})
 
+
+# =========================
+# 🏠 HOME
+# =========================
+def home(request):
+    return render(request, 'home.html')
 

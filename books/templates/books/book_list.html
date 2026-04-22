@@ -1,52 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Book List</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <h1 style="text-align:center;">All Books</h1>
+{% block content %}
 
-    <!-- 🔍 SEARCH FORM  -->
-    <form method="get" style="text-align:center; margin-bottom:20px;">
-        <input type="text" name="q" placeholder="Search books..." value="{{ query }}"
-               style="padding:10px; width:250px; border-radius:5px; border:1px solid #ccc;">
+<h1 style="text-align:center;">All Books</h1>
 
-        <button type="submit">Search</button>
-    </form>
+{% if user.is_authenticated %}
 
-    <!-- ➕ ADD BUTTON -->
-    <div style="text-align:center; margin-bottom:20px;">
-        <a href="{% url 'book_create' %}">Add New Book</a>
-    </div>
-
-    <!-- 📚 BOOK LIST -->
-<ul style="list-style:none; padding:0; width:60%; margin:auto;">
+<ul style="list-style:none; width:50%; margin:auto;">
     {% for book in page_obj %}
-        <li style="padding:10px; border-bottom:1px solid #ccc;">
-            {{ book.title }} by {{ book.author }} - ${{ book.price }}
-
-            <a href="{% url 'book_update' book.id %}">Edit</a>
-            <a href="{% url 'book_delete' book.id %}">Delete</a>
+        <li style="padding:10px; border-bottom:1px solid #ddd;">
+            {{ book.title }} - {{ book.author }} - ${{ book.price }}
         </li>
     {% empty %}
-        <li style="text-align:center;">No books found 😢</li>
+        <li>No books found</li>
     {% endfor %}
 </ul>
 
-<div style="text-align:center; margin-top:20px;">
-    {% if page_obj.has_previous %}
-        <a href="?page=1&q={{ query }}">First</a>
-        <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}">Previous</a>
-    {% endif %}
+{% else %}
+    <p style="text-align:center;">Login qiling 🔒</p>
+{% endif %}
 
-    <span> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} </span>
-
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">Next</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}">Last</a>
-    {% endif %}
-</div>
-
-</body>
-</html>
+{% endblock %}
