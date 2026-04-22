@@ -1,14 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Delete Book</title>
-</head>
-<body>
-    <h1>Are you sure you want to delete "{{ book.title }}"?</h1>
-    <form method="post">
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center; color:red;">
+    ❌ Delete Book
+</h2>
+
+<p style="text-align:center;">
+    Are you sure you want to delete "<b>{{ book.title }}</b>"?
+</p>
+
+<div style="text-align:center; margin-top:20px;">
+
+    <form method="post" style="display:inline;">
         {% csrf_token %}
-        <button type="submit">Yes, Delete</button>
+        <button type="submit" style="padding:8px 15px; background:red; color:white; border:none;">
+            Yes, Delete
+        </button>
     </form>
-    <a href="{% url 'book_list' %}">Cancel</a>
-</body>
-</html>
+
+    <a href="{% url 'book_list' %}" style="margin-left:10px;">
+        Cancel
+    </a>
+
+</div>
+
+{% endblock %}

@@ -1,15 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Book Form</title>
-</head>
-<body>
-    <h1>{{ form.instance.pk|yesno:"Edit Book,Add New Book" }}</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center;">
+    {% if form.instance.pk %}
+        ✏️ Edit Book
+    {% else %}
+        ➕ Add New Book
+    {% endif %}
+</h2>
+
+<div style="width:300px; margin:auto;">
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Save</button>
+
+        <button type="submit" style="width:100%; padding:8px;">
+            Save
+        </button>
     </form>
-    <a href="{% url 'book_list' %}">Back to List</a>
-</body>
-</html>
+
+    <div style="text-align:center; margin-top:10px;">
+        <a href="{% url 'book_list' %}">⬅ Back to List</a>
+    </div>
+
+</div>
+
+{% endblock %}
