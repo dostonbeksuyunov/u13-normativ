@@ -2,41 +2,69 @@
 
 {% block content %}
 
-<h1 style="text-align:center;">All Books</h1>
+<h1 class="text-center mb-4">📚 All Books</h1>
 
-{% if user.is_authenticated %}
+<!-- 🔍 SEARCH -->
+<form method="get" class="text-center mb-4">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search..."
+           class="form-control w-50 d-inline">
+    <button class="btn btn-primary">Search</button>
+</form>
 
-<!-- ➕ ADD BUTTON -->
-<div style="text-align:center; margin-bottom:20px;">
-    <a href="{% url 'book_create' %}">➕ Add New Book</a>
+<!-- ➕ ADD BUTTON (faqat login bo‘lsa) -->
+{% if request.user.is_authenticated %}
+<div class="text-center mb-3">
+    <a href="{% url 'book_create' %}" class="btn btn-success">
+        ➕ Add New Book
+    </a>
 </div>
+{% endif %}
 
-<!-- 📚 BOOK LIST -->
-<ul style="list-style:none; width:50%; margin:auto; padding:0;">
+<!-- 📚 BOOK LIST (HAMMA KO‘RA OLADI) -->
+<ul class="list-group w-50 mx-auto">
 
     {% for book in page_obj %}
-        <li style="padding:10px; border-bottom:1px solid #ddd;">
+        <li class="list-group-item">
 
-            {{ book.title }} - {{ book.author }} - ${{ book.price }}
+            <b>{{ book.title }}</b> — {{ book.author }} — ${{ book.price }}
 
-            <!-- ACTION BUTTONS -->
-            <div style="margin-top:5px;">
-                <a href="{% url 'book_update' book.id %}">✏️ Edit</a> |
-                <a href="{% url 'book_delete' book.id %}">❌ Delete</a>
-            </div>
+            <!-- 🔒 ACTION BUTTONS (faqat login bo‘lsa) -->
+            {% if request.user.is_authenticated %}
+                <div class="mb-2">
+                    <b>{{ book.title }}</b> - {{ book.author }} - ${{ book.price }}
+
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'book_update' book.id %}">Edit</a>
+                        <a href="{% url 'book_delete' book.id %}">Delete</a>
+                    {% endif %}
+                </div>
+            {% endif %}
 
         </li>
 
     {% empty %}
-        <li style="text-align:center;">No books found 😢</li>
+        <li class="list-group-item text-center">
+            No books found
+        </li>
     {% endfor %}
 
 </ul>
 
-{% else %}
+<!-- 📄 PAGINATION -->
+<div class="text-center mt-4">
+    {% if page_obj.has_previous %}
+        <a href="?page=1" class="btn btn-outline-secondary btn-sm">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">Previous</a>
+    {% endif %}
 
-<p style="text-align:center;">Login qiling 🔒</p>
+    <span class="mx-2">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
 
-{% endif %}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-secondary btn-sm">Last</a>
+    {% endif %}
+</div>
 
 {% endblock %}

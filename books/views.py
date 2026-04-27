@@ -1,16 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
 
 from .models import Book
 from .forms import BookForm
+from accounts.decorators import login_required
 
 
-# =========================
-# 📚 BOOK LIST + SEARCH
-# =========================
-@login_required(login_url='login')
+# 🔓 READ (OCHIQ)
 def book_list(request):
     query = request.GET.get('q')
 
@@ -33,10 +30,8 @@ def book_list(request):
     })
 
 
-# =========================
-# ➕ CREATE (LOGIN REQUIRED)
-# =========================
-@login_required(login_url='login')
+# 🔒 CREATE
+@login_required
 def book_create(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
@@ -49,10 +44,8 @@ def book_create(request):
     return render(request, 'books/book_form.html', {'form': form})
 
 
-# =========================
-# ✏️ UPDATE (LOGIN REQUIRED)
-# =========================
-@login_required(login_url='login')
+# 🔒 UPDATE
+@login_required
 def book_update(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -67,10 +60,8 @@ def book_update(request, pk):
     return render(request, 'books/book_form.html', {'form': form})
 
 
-# =========================
-# ❌ DELETE (LOGIN REQUIRED)
-# =========================
-@login_required(login_url='login')
+# 🔒 DELETE
+@login_required
 def book_delete(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -81,9 +72,6 @@ def book_delete(request, pk):
     return render(request, 'books/book_confirm_delete.html', {'book': book})
 
 
-# =========================
 # 🏠 HOME
-# =========================
 def home(request):
     return render(request, 'home.html')
-

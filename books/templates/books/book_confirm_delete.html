@@ -2,26 +2,26 @@
 
 {% block content %}
 
-<h2 style="text-align:center; color:red;">
-    ❌ Delete Book
-</h2>
+<div class="text-center mt-5">
 
-<p style="text-align:center;">
-    Are you sure you want to delete "<b>{{ book.title }}</b>"?
-</p>
+    <h2>❗ Are you sure?</h2>
 
-<div style="text-align:center; margin-top:20px;">
+    <p>
+        You are deleting:
+        <b>{{ book.title }}</b> by {{ book.author }}
+    </p>
 
-    <form method="post" style="display:inline;">
+    <form method="post">
         {% csrf_token %}
-        <button type="submit" style="padding:8px 15px; background:red; color:white; border:none;">
+
+        <button type="submit" class="btn btn-danger">
             Yes, Delete
         </button>
-    </form>
 
-    <a href="{% url 'book_list' %}" style="margin-left:10px;">
-        Cancel
-    </a>
+        <a href="{% url 'book_list' %}" class="btn btn-secondary">
+            Cancel
+        </a>
+    </form>
 
 </div>
 
