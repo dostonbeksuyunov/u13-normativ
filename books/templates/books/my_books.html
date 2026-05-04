@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>📖 My Books</h2>
+
+{% for order in orders %}
+    <div style="background:white;padding:15px;margin-bottom:15px;border-radius:10px;">
+
+        <h3>🧾 Order #{{ order.id }}</h3>
+        <p>📅 {{ order.created_at }}</p>
+
+        <hr>
+
+        {% for item in order.items.all %}
+            <p>
+                📚 {{ item.book.title }}<br>
+                👤 {{ item.book.author }}<br>
+                🔢 Qty: {{ item.quantity }}<br>
+                💰 ${{ item.price }}
+            </p>
+        {% endfor %}
+
+    </div>
+{% empty %}
+    <p>❌ No purchased books</p>
+{% endfor %}
+
+{% endblock %}

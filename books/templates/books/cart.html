@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>🛒 My Cart</h2>
+
+{% if items %}
+
+    {% for item in items %}
+        <div style="background:white;padding:15px;margin-bottom:15px;border-radius:10px;">
+
+            <h3>📚 {{ item.book.title }}</h3>
+            <p>👤 {{ item.book.author }}</p>
+            <p>💰 Price: ${{ item.book.price }}</p>
+
+            <p>🔢 Quantity: {{ item.quantity }}</p>
+
+            <p>💵 Total: ${{ item.book.price|floatformat:2 }}</p>
+
+            <!-- 🔥 ACTION BUTTONS -->
+            <a href="{% url 'increase_item' item.id %}">➕</a>
+
+            <a href="{% url 'decrease_item' item.id %}">➖</a>
+
+            <a href="{% url 'remove_from_cart' item.id %}" style="color:red;">
+                ❌ Remove
+            </a>
+
+        </div>
+    {% endfor %}
+
+    <hr>
+
+    <h3>💳 Total: ${{ total }}</h3>
+
+    <a href="{% url 'checkout' %}" style="background:green;color:white;padding:10px;">
+        Checkout
+    </a>
+
+    <a href="{% url 'clear_cart' %}" style="background:red;color:white;padding:10px;">
+        Clear Cart
+    </a>
+
+{% else %}
+    <p>🛒 Cart empty</p>
+{% endif %}
+
+{% endblock %}

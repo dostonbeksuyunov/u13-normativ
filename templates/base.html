@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>My Library</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
         }
 
+        /* NAVBAR */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 25px;
             background: #2c3e50;
+            flex-wrap: wrap;
         }
 
         .left, .right {
@@ -24,17 +29,28 @@
             gap: 15px;
         }
 
+        /* NAV LINKS */
         .navbar a {
             color: white;
             text-decoration: none;
             font-weight: bold;
-            transition: 0.3s;
         }
 
         .navbar a:hover {
             color: #1abc9c;
         }
 
+        /* GLOBAL LINKS (ko‘k bo‘lmasin) */
+        a {
+            color: #222;
+            text-decoration: none;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+
+        /* SEARCH */
         .search input {
             padding: 6px 10px;
             border-radius: 5px;
@@ -42,13 +58,51 @@
             outline: none;
         }
 
-        .content {
-            padding: 20px;
+        /* BUTTON */
+        .btn {
+            padding: 6px 10px;
+            background: #1abc9c;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #16a085;
         }
 
         .username {
             color: white;
             font-weight: bold;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 20px;
+        }
+
+        /* PAGINATION FIX */
+        .pagination a {
+            background: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            display: inline-block;
+        }
+
+        .pagination a:hover {
+            background: #1abc9c;
+            color: white !important;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -59,8 +113,9 @@
 
     <!-- LEFT -->
     <div class="left">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'book_list' %}">Books</a>
+        <a href="{% url 'home' %}">🏠 Home</a>
+        <a href="{% url 'book_list' %}">📚 Books</a>
+        <a href="{% url 'cart_view' %}">🛒 Cart</a>
     </div>
 
     <!-- SEARCH -->
@@ -76,7 +131,11 @@
         {% if user.is_authenticated %}
 
             <span class="username">👤 {{ user.username }}</span>
-            <a href="{% url 'logout' %}">Logout</a>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn" type="submit">Logout</button>
+            </form>
 
         {% else %}
 
@@ -89,7 +148,7 @@
 
 </div>
 
-<!-- CONTENT -->
+<!-- CONTENT BLOCK -->
 <div class="content">
     {% block content %}
     {% endblock %}
