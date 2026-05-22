@@ -1,18 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout
 
 from .models import Book, Cart, CartItem, Order, OrderItem
 from .forms import BookForm
 
 
-# 🏠 HOME
+# 🏠 HOME (optional, books ichida emas, lekin qolsa bo‘ladi)
 def home(request):
     return render(request, 'home.html')
 
 
 # 🧠 CART HELPER
 def get_cart(user):
+    if not user.is_authenticated:
+        return None
     cart, _ = Cart.objects.get_or_create(user=user)
     return cart
 
@@ -20,7 +24,6 @@ def get_cart(user):
 # 📚 BOOK LIST
 @login_required
 def book_list(request):
-
     query = request.GET.get('q', '')
 
     books = Book.objects.filter(is_deleted=False)
@@ -40,27 +43,18 @@ def book_list(request):
 # 📖 BOOK DETAIL
 @login_required
 def book_detail(request, pk):
-
-    book = get_object_or_404(
-        Book,
-        pk=pk,
-        is_deleted=False
-    )
+    book = get_object_or_404(Book, pk=pk, is_deleted=False)
 
     return render(request, 'books/book_detail.html', {
         'book': book
     })
 
 
-# ➕ CREATE BOOK (ADMIN ONLY)
+# ➕ CREATE
 @login_required
 @permission_required('books.add_book', raise_exception=True)
 def book_create(request):
-
-    form = BookForm(
-        request.POST or None,
-        request.FILES or None
-    )
+    form = BookForm(request.POST or None, request.FILES or None)
 
     if form.is_valid():
         form.save()
@@ -71,18 +65,13 @@ def book_create(request):
     })
 
 
-# ✏️ UPDATE BOOK (ADMIN ONLY)
+# ✏️ UPDATE
 @login_required
 @permission_required('books.change_book', raise_exception=True)
 def book_update(request, pk):
-
     book = get_object_or_404(Book, pk=pk)
 
-    form = BookForm(
-        request.POST or None,
-        request.FILES or None,
-        instance=book
-    )
+    form = BookForm(request.POST or None, request.FILES or None, instance=book)
 
     if form.is_valid():
         form.save()
@@ -93,32 +82,29 @@ def book_update(request, pk):
     })
 
 
-# 🗑 DELETE BOOK (ADMIN ONLY)
+# 🗑 DELETE
 @login_required
 @permission_required('books.delete_book', raise_exception=True)
 def book_delete(request, pk):
-
     book = get_object_or_404(Book, pk=pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         book.is_deleted = True
         book.save()
+        return redirect('book_list')
 
-    return redirect('book_list')
+    return render(request, 'books/book_confirm_delete.html', {
+        'book': book
+    })
 
 
 # 🛒 ADD TO CART
 @login_required
 def add_to_cart(request, pk):
-
     book = get_object_or_404(Book, pk=pk)
-
     cart = get_cart(request.user)
 
-    item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        book=book
-    )
+    item, created = CartItem.objects.get_or_create(cart=cart, book=book)
 
     if not created:
         item.quantity += 1
@@ -130,15 +116,10 @@ def add_to_cart(request, pk):
 # 🧺 CART VIEW
 @login_required
 def cart_view(request):
-
     cart = get_cart(request.user)
-
     items = cart.items.select_related('book')
 
-    total = sum(
-        item.book.price * item.quantity
-        for item in items
-    )
+    total = sum(i.book.price * i.quantity for i in items)
 
     return render(request, 'books/cart.html', {
         'items': items,
@@ -146,31 +127,20 @@ def cart_view(request):
     })
 
 
-# ➕ INCREASE ITEM
+# ➕ INCREASE
 @login_required
 def increase_item(request, item_id):
-
-    item = get_object_or_404(
-        CartItem,
-        id=item_id,
-        cart__user=request.user
-    )
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
 
     item.quantity += 1
     item.save()
-
     return redirect('cart_view')
 
 
-# ➖ DECREASE ITEM
+# ➖ DECREASE
 @login_required
 def decrease_item(request, item_id):
-
-    item = get_object_or_404(
-        CartItem,
-        id=item_id,
-        cart__user=request.user
-    )
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
 
     if item.quantity > 1:
         item.quantity -= 1
@@ -181,38 +151,26 @@ def decrease_item(request, item_id):
     return redirect('cart_view')
 
 
-# ❌ REMOVE ITEM
+# ❌ REMOVE
 @login_required
 def remove_from_cart(request, item_id):
-
-    item = get_object_or_404(
-        CartItem,
-        id=item_id,
-        cart__user=request.user
-    )
-
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     item.delete()
-
     return redirect('cart_view')
 
 
-# 🧹 CLEAR CART
+# 🧹 CLEAR
 @login_required
 def clear_cart(request):
-
     cart = get_cart(request.user)
-
     cart.items.all().delete()
-
     return redirect('cart_view')
 
 
 # 💳 CHECKOUT
 @login_required
 def checkout(request):
-
     cart = get_cart(request.user)
-
     items = cart.items.select_related('book')
 
     if not items.exists():
@@ -221,7 +179,6 @@ def checkout(request):
     order = Order.objects.create(user=request.user)
 
     for item in items:
-
         OrderItem.objects.create(
             order=order,
             book=item.book,
@@ -230,18 +187,36 @@ def checkout(request):
         )
 
     cart.items.all().delete()
-
     return redirect('my_books')
 
 
-# 📦 MY ORDERS
+# 📦 MY BOOKS
 @login_required
 def my_books(request):
-
-    orders = Order.objects.filter(
-        user=request.user
-    ).order_by('-created_at')
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
 
     return render(request, 'books/my_books.html', {
         'orders': orders
     })
+
+
+# 🔐 REGISTER
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        if User.objects.filter(username=username).exists():
+            return redirect('register')
+
+        user = User.objects.create_user(username=username, password=password)
+        login(request, user)
+        return redirect('home')
+
+    return render(request, 'accounts/register.html')
+
+
+# 🔐 LOGOUT
+def logout_view(request):
+    logout(request)
+    return redirect('home')
