@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<!-- 🖼 IMAGE (TOP) -->
+<!-- 🖼 TOP IMAGE -->
 <div style="text-align:center; margin-top:20px;">
     <img src="/media/books/library.jpg"
          alt="Library Image"
@@ -16,17 +16,30 @@
 </div>
 
 
-<!-- TITLE + SEARCH + ADD -->
+<!-- TITLE -->
 <div style="text-align:center; margin-top:20px;">
-
     <h1>📚 Books Library</h1>
+</div>
 
-    <form method="get">
-        <input type="text" name="q" placeholder="Search books...">
-        <button type="submit">Search</button>
+
+<!-- SEARCH + ADD -->
+<div style="text-align:center; margin-top:15px;">
+
+    <form method="get" style="margin-bottom:10px;">
+        <input type="text" name="q" placeholder="Search books..."
+               style="padding:8px; width:200px;">
+        <button type="submit" style="padding:8px;">Search</button>
     </form>
 
-    <a href="{% url 'book_create' %}">
+    <a href="{% url 'book_create' %}"
+       style="
+            display:inline-block;
+            padding:8px 12px;
+            background:#1abc9c;
+            color:white;
+            border-radius:5px;
+            text-decoration:none;
+       ">
         ➕ Add Book
     </a>
 
@@ -45,20 +58,29 @@
             width:60%;
             border-radius:10px;
             background:white;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
         ">
 
             <h3>{{ book.title }}</h3>
             <p>✍️ {{ book.author }}</p>
-            <p>${{ book.price }}</p>
+            <p>💰 ${{ book.price }}</p>
 
             <p>{{ book.description }}</p>
 
-            <a href="{% url 'book_detail' book.id %}">👁 Detail</a>
-            <a href="{% url 'add_to_cart' book.id %}">🛒 Cart</a>
-            <a href="{% url 'book_update' book.id %}">✏️ Edit</a>
-            <a href="{% url 'book_delete' book.id %}">🗑 Delete</a>
+            <div style="margin-top:10px;">
+
+                <a href="{% url 'book_detail' book.id %}">👁 Detail</a> |
+                <a href="{% url 'add_to_cart' book.id %}">🛒 Cart</a> |
+                <a href="{% url 'book_update' book.id %}">✏️ Edit</a> |
+                <a href="{% url 'book_delete' book.id %}">🗑 Delete</a>
+
+            </div>
 
         </div>
+
+    {% empty %}
+
+        <p style="text-align:center;">No books found 📭</p>
 
     {% endfor %}
 
