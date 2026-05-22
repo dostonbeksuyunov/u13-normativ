@@ -40,7 +40,7 @@
             color: #1abc9c;
         }
 
-        /* GLOBAL LINKS (ko‘k bo‘lmasin) */
+        /* GLOBAL LINKS */
         a {
             color: #222;
             text-decoration: none;
@@ -77,12 +77,10 @@
             font-weight: bold;
         }
 
-        /* CONTENT */
         .content {
             padding: 20px;
         }
 
-        /* PAGINATION FIX */
         .pagination a {
             background: white;
             padding: 5px 10px;
@@ -97,7 +95,6 @@
             color: white !important;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 600px) {
             .navbar {
                 flex-direction: column;
@@ -132,6 +129,7 @@
 
             <span class="username">👤 {{ user.username }}</span>
 
+            <!-- 🔥 logout URL must exist -->
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button class="btn" type="submit">Logout</button>
@@ -139,6 +137,7 @@
 
         {% else %}
 
+            <!-- 🔥 URL names must exist -->
             <a href="{% url 'login' %}">Login</a>
             <a href="{% url 'register' %}">Register</a>
 
@@ -148,10 +147,8 @@
 
 </div>
 
-<!-- CONTENT BLOCK -->
 <div class="content">
-    {% block content %}
-    {% endblock %}
+    {% block content %}{% endblock %}
 </div>
 
 </body>

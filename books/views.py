@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
-from django.core.paginator import Paginator
 
 from .models import Book, Cart, CartItem, Order, OrderItem
+from .forms import BookForm
 
 
 # 🏠 HOME
@@ -11,15 +11,17 @@ def home(request):
     return render(request, 'home.html')
 
 
-# 🛒 CART HELPER
+# 🧠 CART HELPER
 def get_cart(user):
-    cart, _ = Cart.objects.get_or_create(user=user)
+    cart, created = Cart.objects.get_or_create(user=user)
     return cart
 
 
 # 📚 BOOK LIST
 def book_list(request):
+
     query = request.GET.get('q', '')
+
     books = Book.objects.filter(is_deleted=False)
 
     if query:
@@ -28,62 +30,71 @@ def book_list(request):
             Q(author__icontains=query)
         )
 
-    paginator = Paginator(books.order_by('-id'), 10)
-    page_obj = paginator.get_page(request.GET.get('page'))
-
     return render(request, 'books/book_list.html', {
-        'page_obj': page_obj,
+        'books': books.order_by('-id'),
         'query': query
     })
 
 
-# 📚 CREATE
+# ➕ CREATE BOOK (ADMIN ONLY)
 @login_required
+@permission_required('books.add_book', raise_exception=True)
 def book_create(request):
-    if request.method == 'POST':
-        Book.objects.create(
-            title=request.POST['title'],
-            author=request.POST['author'],
-            price=request.POST['price'],
-            description=request.POST.get('description', '')
-        )
+
+    form = BookForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
         return redirect('book_list')
 
-    return render(request, 'books/book_form.html')
+    return render(request, 'books/book_form.html', {
+        'form': form
+    })
 
 
-# ✏️ UPDATE
+# ✏️ UPDATE BOOK (ADMIN ONLY)
 @login_required
+@permission_required('books.change_book', raise_exception=True)
 def book_update(request, pk):
+
+    book = get_object_or_404(Book, pk=pk)
+
+    form = BookForm(request.POST or None, instance=book)
+
+    if form.is_valid():
+        form.save()
+        return redirect('book_list')
+
+    return render(request, 'books/book_form.html', {
+        'form': form
+    })
+
+
+# 🗑 DELETE BOOK (ADMIN ONLY)
+@login_required
+@permission_required('books.delete_book', raise_exception=True)
+def book_delete(request, pk):
+
     book = get_object_or_404(Book, pk=pk)
 
     if request.method == 'POST':
-        book.title = request.POST['title']
-        book.author = request.POST['author']
-        book.price = request.POST['price']
-        book.description = request.POST.get('description', '')
+        book.is_deleted = True
         book.save()
-        return redirect('book_list')
 
-    return render(request, 'books/book_form.html', {'book': book})
-
-
-# 🗑 DELETE
-@login_required
-def book_delete(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    book.is_deleted = True
-    book.save()
     return redirect('book_list')
 
 
 # 🛒 ADD TO CART
 @login_required
 def add_to_cart(request, pk):
+
     book = get_object_or_404(Book, pk=pk)
     cart = get_cart(request.user)
 
-    item, created = CartItem.objects.get_or_create(cart=cart, book=book)
+    item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        book=book
+    )
 
     if not created:
         item.quantity += 1
@@ -95,10 +106,13 @@ def add_to_cart(request, pk):
 # 🧺 CART VIEW
 @login_required
 def cart_view(request):
+
     cart = get_cart(request.user)
     items = cart.items.select_related('book')
 
-    total = sum(i.book.price * i.quantity for i in items)
+    total = 0
+    for item in items:
+        total += item.book.price * item.quantity
 
     return render(request, 'books/cart.html', {
         'items': items,
@@ -106,19 +120,31 @@ def cart_view(request):
     })
 
 
-# ➕ INCREASE
+# ➕ INCREASE ITEM
 @login_required
 def increase_item(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+    item = get_object_or_404(
+        CartItem,
+        id=item_id,
+        cart__user=request.user
+    )
+
     item.quantity += 1
     item.save()
+
     return redirect('cart_view')
 
 
-# ➖ DECREASE
+# ➖ DECREASE ITEM
 @login_required
 def decrease_item(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+    item = get_object_or_404(
+        CartItem,
+        id=item_id,
+        cart__user=request.user
+    )
 
     if item.quantity > 1:
         item.quantity -= 1
@@ -129,31 +155,42 @@ def decrease_item(request, item_id):
     return redirect('cart_view')
 
 
-# ❌ REMOVE
+# ❌ REMOVE ITEM
 @login_required
 def remove_from_cart(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+    item = get_object_or_404(
+        CartItem,
+        id=item_id,
+        cart__user=request.user
+    )
+
     item.delete()
+
     return redirect('cart_view')
 
 
 # 🧹 CLEAR CART
 @login_required
 def clear_cart(request):
+
     cart = get_cart(request.user)
     cart.items.all().delete()
+
     return redirect('cart_view')
 
 
-# 💳 CHECKOUT (HAR USER O‘Z ORDERIGA EGA)
+# 💳 CHECKOUT (ORDER PER USER)
 @login_required
 def checkout(request):
+
     cart = get_cart(request.user)
     items = cart.items.select_related('book')
 
     if not items.exists():
         return redirect('cart_view')
 
+    # 🔥 HAR USER ORDERI 0 DAN BOSHLANADI
     order = Order.objects.create(user=request.user)
 
     for item in items:
@@ -169,12 +206,13 @@ def checkout(request):
     return redirect('my_books')
 
 
-# 📖 MY BOOKS (USER-BASED ORDER)
+# 📦 MY ORDERS (ONLY CURRENT USER)
 @login_required
 def my_books(request):
-    orders = Order.objects.filter(user=request.user)\
-        .prefetch_related('items__book')\
-        .order_by('-created_at')
+
+    orders = Order.objects.filter(
+        user=request.user
+    ).prefetch_related('items__book').order_by('-created_at')
 
     return render(request, 'books/my_books.html', {
         'orders': orders

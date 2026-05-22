@@ -6,5 +6,4 @@ class BooksConfig(AppConfig):
     name = 'books'
 
     def ready(self):
-        # 🔥 signalni safe import qilish
         import books.signals

@@ -2,74 +2,79 @@
 
 {% block content %}
 
-<h1 class="text-center mb-4">📚 All Books</h1>
+<div class="container" style="max-width: 1000px; margin: auto;">
 
-<!-- 🔍 SEARCH -->
-<form method="get" class="text-center mb-4">
-    <input type="text" name="q" value="{{ query }}" placeholder="Search..."
-           class="form-control w-50 d-inline">
-    <button class="btn btn-primary">Search</button>
-</form>
+    <h2 style="text-align:center; margin:20px 0;">
+        📚 Books
+    </h2>
 
-<!-- ➕ ADD BUTTON -->
-{% if request.user.is_authenticated %}
-<div class="text-center mb-3">
-    <a href="{% url 'book_create' %}" class="btn btn-success">
-        ➕ Add New Book
-    </a>
-</div>
-{% endif %}
+    <!-- SEARCH -->
+    <form method="get" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+        <input type="text"
+               name="q"
+               value="{{ query }}"
+               placeholder="Search books..."
+               style="padding:10px; width:300px; border:1px solid #ccc; border-radius:8px;">
 
-<!-- 📚 BOOK LIST -->
-<ul class="list-group w-50 mx-auto">
+        <button style="padding:10px 15px; background:#1abc9c; border:none; color:white; border-radius:8px;">
+            Search
+        </button>
+    </form>
 
-    {% for book in page_obj %}
-        <li class="list-group-item">
-
-            <b>{{ book.title }}</b> — {{ book.author }} — ${{ book.price }}
-
-            <!-- 🛒 ADD TO CART -->
-            {% if request.user.is_authenticated %}
-                <div class="mt-2">
-                    <a href="{% url 'add_to_cart' book.id %}" class="btn btn-warning btn-sm">
-                        🛒 Add to Cart
-                    </a>
-
-                    <a href="{% url 'book_update' book.id %}" class="btn btn-primary btn-sm">
-                        Edit
-                    </a>
-
-                    <a href="{% url 'book_delete' book.id %}" class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                </div>
-            {% endif %}
-
-        </li>
-
-    {% empty %}
-        <li class="list-group-item text-center">
-            No books found
-        </li>
-    {% endfor %}
-
-</ul>
-
-<!-- 📄 PAGINATION -->
-<div class="text-center mt-4">
-    {% if page_obj.has_previous %}
-        <a href="?page=1" class="btn btn-outline-secondary btn-sm">First</a>
-        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">Previous</a>
+    <!-- ADD BUTTON -->
+    {% if perms.books.add_book %}
+    <div style="text-align:center; margin-bottom:20px;">
+        <a href="{% url 'book_create' %}"
+           style="background:#2ecc71; padding:10px 15px; color:white; border-radius:8px; text-decoration:none;">
+            ➕ Add Book
+        </a>
+    </div>
     {% endif %}
 
-    <span class="mx-2">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    </span>
+    <!-- BOOK CARDS -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:15px;">
 
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">Next</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-secondary btn-sm">Last</a>
-    {% endif %}
+        {% for book in books %}
+
+        <div style="background:white; padding:15px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+
+            <h3 style="margin:0;">📖 {{ book.title }}</h3>
+            <p style="color:gray;">✍️ {{ book.author }}</p>
+            <p style="font-weight:bold;">💰 ${{ book.price }}</p>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+
+                <a href="{% url 'add_to_cart' book.id %}"
+                   style="background:#f39c12; padding:6px 10px; color:white; border-radius:6px; text-decoration:none;">
+                    🛒 Cart
+                </a>
+
+                {% if perms.books.change_book %}
+                <a href="{% url 'book_update' book.id %}"
+                   style="background:#3498db; padding:6px 10px; color:white; border-radius:6px; text-decoration:none;">
+                    ✏️ Edit
+                </a>
+                {% endif %}
+
+                {% if perms.books.delete_book %}
+                <form method="post" action="{% url 'book_delete' book.id %}">
+                    {% csrf_token %}
+                    <button style="background:#e74c3c; border:none; color:white; padding:6px 10px; border-radius:6px;">
+                        🗑 Delete
+                    </button>
+                </form>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% empty %}
+        <p style="text-align:center;">No books found</p>
+        {% endfor %}
+
+    </div>
+
 </div>
 
 {% endblock %}
