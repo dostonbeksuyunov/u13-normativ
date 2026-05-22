@@ -11,15 +11,27 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-s2ad((05u$(-%u7y1s3z+m3h*8+e%b$jjq^!g&png@p1x&svqj'
 
-DEBUG = True
+# 🔥 ENV CONFIG
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
-ALLOWED_HOSTS = []
+environ.Env.read_env(BASE_DIR / '.env')
 
+
+# 🔐 CORE SETTINGS
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env.bool('DEBUG', default=False)
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+
+# 📦 APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -32,6 +44,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
 ]
 
+
+# ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -42,8 +56,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'config.urls'
 
+
+# 🎨 TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -60,8 +77,11 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
+
+# 🗄 DATABASE
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -69,14 +89,19 @@ DATABASES = {
     }
 }
 
+
+# 🌍 INTERNATIONALIZATION
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
 
-# 🔥 MUHIM FIX
+# 📁 STATIC FILES
+STATIC_URL = '/static/'
+
+
+# 🔐 AUTH SETTINGS
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

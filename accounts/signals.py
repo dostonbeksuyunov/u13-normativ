@@ -7,5 +7,7 @@ from django.dispatch import receiver
 def add_user_to_group(sender, instance, created, **kwargs):
 
     if created:
-        group, created = Group.objects.get_or_create(name='SimpleUser')
+        group, _ = Group.objects.get_or_create(name='User')
         instance.groups.add(group)
+
+        print(f"User groupga qo‘shildi: {instance.username}")

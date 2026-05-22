@@ -13,11 +13,12 @@ def home(request):
 
 # 🧠 CART HELPER
 def get_cart(user):
-    cart, created = Cart.objects.get_or_create(user=user)
+    cart, _ = Cart.objects.get_or_create(user=user)
     return cart
 
 
 # 📚 BOOK LIST
+@login_required
 def book_list(request):
 
     query = request.GET.get('q', '')
@@ -110,9 +111,7 @@ def cart_view(request):
     cart = get_cart(request.user)
     items = cart.items.select_related('book')
 
-    total = 0
-    for item in items:
-        total += item.book.price * item.quantity
+    total = sum(item.book.price * item.quantity for item in items)
 
     return render(request, 'books/cart.html', {
         'items': items,
@@ -190,7 +189,6 @@ def checkout(request):
     if not items.exists():
         return redirect('cart_view')
 
-    # 🔥 HAR USER ORDERI 0 DAN BOSHLANADI
     order = Order.objects.create(user=request.user)
 
     for item in items:
@@ -206,13 +204,13 @@ def checkout(request):
     return redirect('my_books')
 
 
-# 📦 MY ORDERS (ONLY CURRENT USER)
+# 📦 MY ORDERS (USER ONLY)
 @login_required
 def my_books(request):
 
     orders = Order.objects.filter(
         user=request.user
-    ).prefetch_related('items__book').order_by('-created_at')
+    ).order_by('-created_at')
 
     return render(request, 'books/my_books.html', {
         'orders': orders

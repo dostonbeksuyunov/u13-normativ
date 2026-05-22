@@ -5,23 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e52b086f-a6cd-4e1e-bd45-027c4b009c5e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/accounts/signals.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/signals.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/books/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/books/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/books/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/templates/books/book_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/books/templates/books/book_list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/books/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/books/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
