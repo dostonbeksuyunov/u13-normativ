@@ -2,32 +2,49 @@
 
 {% block content %}
 
-<h2 class="text-center mb-4">
-    {% if form.instance.pk %}
-        ✏️ Update Book
-    {% else %}
-        ➕ Add Book
-    {% endif %}
-</h2>
+<div class="container mt-5">
 
-<div class="w-50 mx-auto">
+    <div class="card shadow p-4 mx-auto"
+         style="max-width:600px; border-radius:20px;">
 
-    <form method="post">
-        {% csrf_token %}
+        <h2 class="text-center mb-4">
 
-        {{ form.as_p }}
+            {% if form.instance.pk %}
+                ✏️ Update Book
+            {% else %}
+                ➕ Add Book
+            {% endif %}
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-success">
-                Save
-            </button>
+        </h2>
 
-            <a href="{% url 'book_list' %}" class="btn btn-secondary">
-                Cancel
-            </a>
-        </div>
+        <!-- 🔥 MUHIM -->
+        <form method="post" enctype="multipart/form-data">
 
-    </form>
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div class="text-center mt-4">
+
+                <button type="submit"
+                        class="btn btn-success px-4">
+
+                    Save
+
+                </button>
+
+                <a href="{% url 'book_list' %}"
+                   class="btn btn-secondary px-4">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
 

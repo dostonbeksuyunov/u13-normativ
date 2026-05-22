@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0 mx-auto"
+         style="max-width:900px; border-radius:20px; overflow:hidden;">
+
+        <div class="row g-0">
+
+            <!-- IMAGE -->
+            <div class="col-md-5">
+
+                {% if book.image %}
+                    <img src="{{ book.image.url }}"
+                         class="img-fluid h-100"
+                         style="object-fit:cover;">
+                {% endif %}
+
+            </div>
+
+            <!-- CONTENT -->
+            <div class="col-md-7">
+
+                <div class="card-body p-4">
+
+                    <h1 class="fw-bold">
+                        {{ book.title }}
+                    </h1>
+
+                    <h4 class="text-muted">
+                        ✍️ {{ book.author }}
+                    </h4>
+
+                    <h3 class="text-success mt-3">
+                        ${{ book.price }}
+                    </h3>
+
+                    <hr>
+
+                    <p>
+                        {{ book.description }}
+                    </p>
+
+                    <a href="{% url 'add_to_cart' book.id %}"
+                       class="btn btn-warning mt-3">
+
+                        🛒 Add To Cart
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

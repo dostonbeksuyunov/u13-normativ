@@ -2,78 +2,65 @@
 
 {% block content %}
 
-<div class="container" style="max-width: 1000px; margin: auto;">
+<!-- 🖼 IMAGE (TOP) -->
+<div style="text-align:center; margin-top:20px;">
+    <img src="/media/books/library.jpg"
+         alt="Library Image"
+         style="
+            width:90%;
+            max-height:300px;
+            object-fit:cover;
+            border-radius:20px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.2);
+         ">
+</div>
 
-    <h2 style="text-align:center; margin:20px 0;">
-        📚 Books
-    </h2>
 
-    <!-- SEARCH -->
-    <form method="get" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
-        <input type="text"
-               name="q"
-               value="{{ query }}"
-               placeholder="Search books..."
-               style="padding:10px; width:300px; border:1px solid #ccc; border-radius:8px;">
+<!-- TITLE + SEARCH + ADD -->
+<div style="text-align:center; margin-top:20px;">
 
-        <button style="padding:10px 15px; background:#1abc9c; border:none; color:white; border-radius:8px;">
-            Search
-        </button>
+    <h1>📚 Books Library</h1>
+
+    <form method="get">
+        <input type="text" name="q" placeholder="Search books...">
+        <button type="submit">Search</button>
     </form>
 
-    <!-- ADD BUTTON -->
-    {% if perms.books.add_book %}
-    <div style="text-align:center; margin-bottom:20px;">
-        <a href="{% url 'book_create' %}"
-           style="background:#2ecc71; padding:10px 15px; color:white; border-radius:8px; text-decoration:none;">
-            ➕ Add Book
-        </a>
-    </div>
-    {% endif %}
+    <a href="{% url 'book_create' %}">
+        ➕ Add Book
+    </a>
 
-    <!-- BOOK CARDS -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:15px;">
+</div>
 
-        {% for book in books %}
 
-        <div style="background:white; padding:15px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+<!-- BOOK LIST -->
+<div style="margin-top:30px;">
 
-            <h3 style="margin:0;">📖 {{ book.title }}</h3>
-            <p style="color:gray;">✍️ {{ book.author }}</p>
-            <p style="font-weight:bold;">💰 ${{ book.price }}</p>
+    {% for book in books %}
 
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+        <div style="
+            border:1px solid #ddd;
+            padding:15px;
+            margin:10px auto;
+            width:60%;
+            border-radius:10px;
+            background:white;
+        ">
 
-                <a href="{% url 'add_to_cart' book.id %}"
-                   style="background:#f39c12; padding:6px 10px; color:white; border-radius:6px; text-decoration:none;">
-                    🛒 Cart
-                </a>
+            <h3>{{ book.title }}</h3>
+            <p>✍️ {{ book.author }}</p>
+            <p>${{ book.price }}</p>
 
-                {% if perms.books.change_book %}
-                <a href="{% url 'book_update' book.id %}"
-                   style="background:#3498db; padding:6px 10px; color:white; border-radius:6px; text-decoration:none;">
-                    ✏️ Edit
-                </a>
-                {% endif %}
+            <p>{{ book.description }}</p>
 
-                {% if perms.books.delete_book %}
-                <form method="post" action="{% url 'book_delete' book.id %}">
-                    {% csrf_token %}
-                    <button style="background:#e74c3c; border:none; color:white; padding:6px 10px; border-radius:6px;">
-                        🗑 Delete
-                    </button>
-                </form>
-                {% endif %}
-
-            </div>
+            <a href="{% url 'book_detail' book.id %}">👁 Detail</a>
+            <a href="{% url 'add_to_cart' book.id %}">🛒 Cart</a>
+            <a href="{% url 'book_update' book.id %}">✏️ Edit</a>
+            <a href="{% url 'book_delete' book.id %}">🗑 Delete</a>
 
         </div>
 
-        {% empty %}
-        <p style="text-align:center;">No books found</p>
-        {% endfor %}
-
-    </div>
+    {% endfor %}
 
 </div>
 

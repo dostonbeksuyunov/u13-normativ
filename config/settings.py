@@ -15,23 +15,18 @@ import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# 🔥 ENV CONFIG
 env = environ.Env(
     DEBUG=(bool, False)
 )
 
 environ.Env.read_env(BASE_DIR / '.env')
 
-
-# 🔐 CORE SETTINGS
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
-# 📦 APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +40,6 @@ INSTALLED_APPS = [
 ]
 
 
-# ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,7 +54,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'config.urls'
 
 
-# 🎨 TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -81,7 +74,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# 🗄 DATABASE
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -90,18 +82,22 @@ DATABASES = {
 }
 
 
-# 🌍 INTERNATIONALIZATION
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
 
-# 📁 STATIC FILES
+# ✅ STATIC
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 
-# 🔐 AUTH SETTINGS
+# ✅ MEDIA
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

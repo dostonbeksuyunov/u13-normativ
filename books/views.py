@@ -37,12 +37,30 @@ def book_list(request):
     })
 
 
+# 📖 BOOK DETAIL
+@login_required
+def book_detail(request, pk):
+
+    book = get_object_or_404(
+        Book,
+        pk=pk,
+        is_deleted=False
+    )
+
+    return render(request, 'books/book_detail.html', {
+        'book': book
+    })
+
+
 # ➕ CREATE BOOK (ADMIN ONLY)
 @login_required
 @permission_required('books.add_book', raise_exception=True)
 def book_create(request):
 
-    form = BookForm(request.POST or None)
+    form = BookForm(
+        request.POST or None,
+        request.FILES or None
+    )
 
     if form.is_valid():
         form.save()
@@ -60,7 +78,11 @@ def book_update(request, pk):
 
     book = get_object_or_404(Book, pk=pk)
 
-    form = BookForm(request.POST or None, instance=book)
+    form = BookForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=book
+    )
 
     if form.is_valid():
         form.save()
@@ -90,6 +112,7 @@ def book_delete(request, pk):
 def add_to_cart(request, pk):
 
     book = get_object_or_404(Book, pk=pk)
+
     cart = get_cart(request.user)
 
     item, created = CartItem.objects.get_or_create(
@@ -109,9 +132,13 @@ def add_to_cart(request, pk):
 def cart_view(request):
 
     cart = get_cart(request.user)
+
     items = cart.items.select_related('book')
 
-    total = sum(item.book.price * item.quantity for item in items)
+    total = sum(
+        item.book.price * item.quantity
+        for item in items
+    )
 
     return render(request, 'books/cart.html', {
         'items': items,
@@ -174,16 +201,18 @@ def remove_from_cart(request, item_id):
 def clear_cart(request):
 
     cart = get_cart(request.user)
+
     cart.items.all().delete()
 
     return redirect('cart_view')
 
 
-# 💳 CHECKOUT (ORDER PER USER)
+# 💳 CHECKOUT
 @login_required
 def checkout(request):
 
     cart = get_cart(request.user)
+
     items = cart.items.select_related('book')
 
     if not items.exists():
@@ -192,6 +221,7 @@ def checkout(request):
     order = Order.objects.create(user=request.user)
 
     for item in items:
+
         OrderItem.objects.create(
             order=order,
             book=item.book,
@@ -204,7 +234,7 @@ def checkout(request):
     return redirect('my_books')
 
 
-# 📦 MY ORDERS (USER ONLY)
+# 📦 MY ORDERS
 @login_required
 def my_books(request):
 

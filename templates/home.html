@@ -2,13 +2,20 @@
 
 {% block content %}
 
+<!-- TITLE -->
 <div style="text-align:center; margin-top:40px;">
+
     <h1>📚 My Library System</h1>
 
     {% if user.is_authenticated %}
-        <h2>👋 Xush kelibsiz, {{ user.first_name|default:user.username }}</h2>
+        <h2>
+            👋 Xush kelibsiz,
+            {{ user.first_name|default:user.username }}
+        </h2>
     {% endif %}
+
 </div>
+
 
 <!-- DASHBOARD CARDS -->
 <div style="
@@ -29,13 +36,16 @@
             background:white;
             box-shadow:0 4px 10px rgba(0,0,0,0.1);
             transition:0.3s;
-        " onmouseover="this.style.transform='scale(1.05)'"
-          onmouseout="this.style.transform='scale(1)'">
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'">
 
             <h3>📚 Books</h3>
             <p>Browse all books</p>
+
         </div>
     </a>
+
 
     <!-- AUTH -->
     <a href="{% url 'login' %}" style="text-decoration:none;">
@@ -47,13 +57,16 @@
             background:white;
             box-shadow:0 4px 10px rgba(0,0,0,0.1);
             transition:0.3s;
-        " onmouseover="this.style.transform='scale(1.05)'"
-          onmouseout="this.style.transform='scale(1)'">
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'">
 
             <h3>🔐 Auth</h3>
             <p>Login / Register</p>
+
         </div>
     </a>
+
 
     <!-- CART -->
     <a href="{% url 'cart_view' %}" style="text-decoration:none;">
@@ -65,15 +78,18 @@
             background:white;
             box-shadow:0 4px 10px rgba(0,0,0,0.1);
             transition:0.3s;
-        " onmouseover="this.style.transform='scale(1.05)'"
-          onmouseout="this.style.transform='scale(1)'">
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'">
 
             <h3>🛒 Cart</h3>
             <p>Your shopping cart</p>
+
         </div>
     </a>
 
-    <!-- MY BOOKS (FIXED) -->
+
+    <!-- MY BOOKS -->
     <a href="{% url 'my_books' %}" style="text-decoration:none;">
         <div style="
             padding:25px;
@@ -83,46 +99,16 @@
             background:white;
             box-shadow:0 4px 10px rgba(0,0,0,0.1);
             transition:0.3s;
-        " onmouseover="this.style.transform='scale(1.05)'"
-          onmouseout="this.style.transform='scale(1)'">
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'">
 
             <h3>📖 My Books</h3>
             <p>Sotib olingan kitoblar</p>
+
         </div>
     </a>
 
 </div>
-
-<!-- FOOTER -->
-<div style="
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:#2c3e50;
-    color:white;
-    text-align:center;
-    padding:10px;
-">
-
-    <p>🇺🇿 Uzbekistan | 📅 <span id="date"></span> | ⏰ <span id="time"></span></p>
-
-</div>
-
-<!-- JS TIME -->
-<script>
-    function updateTime() {
-        let now = new Date();
-
-        document.getElementById("date").innerText =
-            now.toLocaleDateString();
-
-        document.getElementById("time").innerText =
-            now.toLocaleTimeString();
-    }
-
-    setInterval(updateTime, 1000);
-    updateTime();
-</script>
 
 {% endblock %}
