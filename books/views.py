@@ -202,15 +202,24 @@ def my_books(request):
 
 # 🔐 REGISTER
 def register_view(request):
+
     if request.method == 'POST':
+
         username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
 
         if User.objects.filter(username=username).exists():
             return redirect('register')
 
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
         login(request, user)
+
         return redirect('home')
 
     return render(request, 'accounts/register.html')

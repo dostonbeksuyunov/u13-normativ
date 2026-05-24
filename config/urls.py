@@ -12,12 +12,19 @@ def home_view(request):
 
 urlpatterns = [
     path('', home_view, name='home'),
+
     path('books/', include('books.urls')),
+
+    # CUSTOM AUTH
     path('accounts/', include('accounts.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+
     path('admin/', admin.site.urls),
 ]
 
-# 🔥 MEDIA FILES
+
+# MEDIA FILES
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

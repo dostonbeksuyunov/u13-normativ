@@ -1,8 +1,23 @@
+{% extends 'base.html' %}
 
-<h1>Register</h1>
+{% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+<div style="max-width:400px;margin:auto;">
+
+    <h1>Register</h1>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Register
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

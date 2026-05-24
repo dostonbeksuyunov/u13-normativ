@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>My Library</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <style>
+
+        *{
+            box-sizing:border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -25,7 +32,8 @@
             flex-wrap: wrap;
         }
 
-        .left, .right {
+        .left,
+        .right {
             display: flex;
             align-items: center;
             gap: 15px;
@@ -35,26 +43,35 @@
             color: white;
             text-decoration: none;
             font-weight: bold;
+            transition: .3s;
         }
 
         .navbar a:hover {
             color: #1abc9c;
         }
 
+        .search form{
+            display:flex;
+            gap:8px;
+        }
+
         .search input {
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 5px;
             border: none;
             outline: none;
+            width: 220px;
         }
 
         .btn {
-            padding: 6px 10px;
+            padding: 8px 14px;
             background: #1abc9c;
             border-radius: 5px;
             border: none;
             cursor: pointer;
             color: white;
+            font-weight:bold;
+            transition:.3s;
         }
 
         .btn:hover {
@@ -79,12 +96,39 @@
             margin-top: auto;
         }
 
-        @media (max-width: 600px) {
+        .message{
+            padding:12px;
+            margin-bottom:15px;
+            border-radius:6px;
+            font-weight:bold;
+        }
+
+        .success{
+            background:#d4edda;
+            color:#155724;
+        }
+
+        .error{
+            background:#f8d7da;
+            color:#721c24;
+        }
+
+        @media (max-width: 700px) {
+
             .navbar {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
+            }
+
+            .search input{
+                width:100%;
+            }
+
+            .search form{
+                width:100%;
             }
         }
+
     </style>
 </head>
 
@@ -93,33 +137,67 @@
 <div class="navbar">
 
     <div class="left">
-        <a href="{% url 'home' %}">🏠 Home</a>
-        <a href="{% url 'book_list' %}">📚 Books</a>
-        <a href="{% url 'cart_view' %}">🛒 Cart</a>
+
+        <a href="{% url 'home' %}">
+            🏠 Home
+        </a>
+
+        <a href="{% url 'book_list' %}">
+            📚 Books
+        </a>
+
+        <a href="{% url 'cart_view' %}">
+            🛒 Cart
+        </a>
+
     </div>
 
     <div class="search">
-        <form method="get" action="{% url 'book_list' %}">
-            <input type="text" name="q" placeholder="Search books...">
+
+        <form method="get"
+              action="{% url 'book_list' %}">
+
+            <input type="text"
+                   name="q"
+                   placeholder="Search books...">
+
+            <button class="btn">
+                Search
+            </button>
+
         </form>
+
     </div>
 
     <div class="right">
 
         {% if user.is_authenticated %}
-            <span class="username">👤 {{ user.username }}</span>
 
-            <form method="post" action="{% url 'logout' %}">
+            <span class="username">
+                👤 {{ user.username }}
+            </span>
+
+            <form method="post"
+                  action="{% url 'logout' %}">
+
                 {% csrf_token %}
-                <button class="btn">Logout</button>
+
+                <button class="btn">
+                    Logout
+                </button>
+
             </form>
 
         {% else %}
-            <a href="{% url 'login' %}">Login</a>
 
-            {# ❗ IMPORTANT FIX #}
-            {# agar register yo‘q bo‘lsa error beradi #}
-            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'login' %}">
+                Login
+            </a>
+
+            <a href="{% url 'register' %}">
+                Register
+            </a>
+
         {% endif %}
 
     </div>
@@ -127,23 +205,53 @@
 </div>
 
 <div class="content">
-    {% block content %}{% endblock %}
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
 </div>
 
 <div class="footer">
+
     🇺🇿 Uzbekistan |
+
     📅 <span id="date"></span> |
+
     ⏰ <span id="time"></span>
+
 </div>
 
 <script>
+
 function updateTime(){
+
     let now = new Date();
-    document.getElementById("date").innerText = now.toLocaleDateString();
-    document.getElementById("time").innerText = now.toLocaleTimeString();
+
+    document.getElementById(
+        "date"
+    ).innerText = now.toLocaleDateString();
+
+    document.getElementById(
+        "time"
+    ).innerText = now.toLocaleTimeString();
 }
+
 setInterval(updateTime,1000);
+
 updateTime();
+
 </script>
 
 </body>
